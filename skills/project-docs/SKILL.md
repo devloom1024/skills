@@ -17,7 +17,7 @@ description: Use when a project needs agent-facing documentation organization, A
 
 ## 选择流程
 
-所有模式先读 [组织规则](references/document-ownership.md)；准备写哪类文档，再读 [对应内容契约](references/content-contracts.md)。
+所有模式先读 [组织规则](references/document-ownership.md)；初始化、迁移、目录审查、新增页面或改变分组时读 [目录内部组织](references/directory-layout.md)；准备写哪类文档，再读 [对应内容契约](references/content-contracts.md)。
 
 | 用户任务 | 再读 | 输出范围 |
 |---|---|---|
@@ -25,15 +25,22 @@ description: Use when a project needs agent-facing documentation organization, A
 | 整理现有文档 | [采用与迁移](references/adoption.md) | 归属映射、迁移、引用修复；保留用户规则 |
 | 同步变更、处理设计或教训 | [维护](references/maintenance.md)，涉及时读 [决策](references/decision-records.md) / [LESSONS](references/lessons.md) | 仅更新受影响的所有者和引用 |
 | 检查文档质量 | [维护](references/maintenance.md) | 默认只读，逐项给证据、影响和修复建议 |
+| 提炼或维护开发教程 | [Cookbook 编写流程](references/cookbook-authoring.md) | 从真实任务核对前提、步骤、验证和持续维护 |
 
 普通功能开发不触发全仓文档重组。需要示范深度时读 [一致示例](references/examples.md)，仅复制适用的 [模板](assets/templates/)，填写事实并删除不适用部分。
+
+## 与决策专项治理协作
+
+本 Skill 定义文档体系、决策内容与格式要求，并把实际规则写入目标项目。创建前查重、维护单条决定、确认实施范围等基本操作见 [决策规范](references/decision-records.md)，不依赖另一个 Skill 安装。
+
+独立的 decision-records 可在可用时执行取代分析、合并清理和冻结归档等专项流程。两者先读同一份目标项目决策约定，不各自覆盖项目规则。缺少专项工具时仍可完成规范初始化和基本维护；复杂冻结操作若没有可验证机制，报告缺口而不声称已完成。
 
 ## 执行
 
 1. 确认目标根目录、请求模式和授权范围。盘点入口、文档、代码归属、真实命令和既有决策格式。
-2. 按事实归属确定必要文件。迁移前列出旧路径到新所有者的映射；现有 ADR 可保留原路径并明确角色映射。
+2. 按事实归属和目录契约确定必要文件、名称、层级、入口与资源位置。迁移前列出旧路径到新所有者的映射；保留已有 ADR 和稳定网站入口，明确适配。
 3. 对照内容契约写入或审查：明确条件、默认值、失败、所有权、生命周期、兼容性和限制中适用的内容。未知信息写入交付缺口，不留下假装完成的占位内容。
-4. 实施初始化/整理时，把长期文档维护规则和导航写入目标 `AGENTS.md` / `docs/AGENTS.md`，使后续会话无需再次调用本 Skill 也能遵守。全仓根指令只保存常驻要求；领域细则放所属文档。
+4. 实施初始化/整理时，把长期文档维护规则、实际采用的命名/分组/导航/资源约定写入目标 `AGENTS.md` / `docs/AGENTS.md` 或其项目内所有者，使后续会话无需再次调用本 Skill 也能遵守。全仓根指令只保存常驻要求；领域细则放所属文档。
 5. 修复实际受影响的引用。决策移到 implemented 时改成当前决定；LESSONS 晋升后完整规则只保留在正式规范。
 6. 运行机械检查，再按源码和实际操作核对语义。未运行的命令、未检查的外链/锚点、无法确认的实现分别说明。
 

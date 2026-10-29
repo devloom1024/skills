@@ -1,0 +1,4 @@
+interface:
+  display_name: "决策记录治理"
+  short_description: "创建与维护项目决策记录，核对实施和取代关系，安全合并归档并验证冻结历史"
+  default_prompt: "使用 $decision-records，按当前项目约定审查受影响决定、实施证据和取代关系，完成请求范围内的记录维护与验证。"
