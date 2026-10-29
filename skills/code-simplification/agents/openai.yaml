@@ -1,0 +1,4 @@
+interface:
+  display_name: "代码简化评估"
+  short_description: "基于生产消费与维护成本发现简化机会，核对动态接口和行为代价，并验证授权改动"
+  default_prompt: "使用 $code-simplification，只读评估当前范围内值得实施的简化，给出消费证据、维护收益、保留理由和验证缺口。"

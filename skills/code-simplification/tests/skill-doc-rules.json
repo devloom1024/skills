@@ -1,0 +1,5 @@
+{
+  "required_files": ["SKILL.md", "references/evidence.md", "references/implementation.md"],
+  "exclude": ["assets/templates/**"],
+  "note_roots": []
+}
