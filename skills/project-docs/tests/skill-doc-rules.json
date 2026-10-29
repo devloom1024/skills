@@ -1,0 +1,5 @@
+{
+  "required_files": ["SKILL.md", "references/content-contracts.md", "references/checker.md"],
+  "exclude": ["assets/templates/**"],
+  "note_roots": []
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目文档组织"
+  short_description: "建立与维护项目文档分层、内容契约、Agent 指令、决策记录及经验晋升规范"
+  default_prompt: "使用 $project-docs，根据当前项目的代码与既有约定，建立或审查文档组织、内容要求和维护规则。"
