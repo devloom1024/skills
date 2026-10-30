@@ -1,0 +1,4 @@
+interface:
+  display_name: "代码评审"
+  short_description: "固定评审范围与版本，核对完整行为路径，区分已证实缺陷、验证缺口和设计建议"
+  default_prompt: "使用 $code-review，只读评审指定改动，确认真实版本与影响路径，报告有证据的缺陷、验证缺口及检查范围。"
