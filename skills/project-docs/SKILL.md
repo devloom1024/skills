@@ -29,6 +29,8 @@ description: Use when a project needs agent-facing documentation organization, A
 
 普通功能开发不触发全仓文档重组。需要示范深度时读 [一致示例](references/examples.md)，仅复制适用的 [模板](assets/templates/)，填写事实并删除不适用部分。
 
+整理项目开发规范时，默认由 `docs/standards/` 拥有已采纳的工程要求，领域防错要求放其 `defensive-patterns/` 子目录；已有 conventions、独立防错目录等保留并映射。按 [目录契约](references/directory-layout.md) 和 [规范内容契约](references/content-contracts.md#项目开发规范) 建立任务导航、规则等级和判断依据，不凭模板创造标准。
+
 ## 与决策专项治理协作
 
 本 Skill 定义文档体系、决策内容与格式要求，并把实际规则写入目标项目。创建前查重、维护单条决定、确认实施范围等基本操作见 [决策规范](references/decision-records.md)，不依赖另一个 Skill 安装。
@@ -40,7 +42,7 @@ description: Use when a project needs agent-facing documentation organization, A
 1. 确认目标根目录、请求模式和授权范围。盘点入口、文档、代码归属、真实命令和既有决策格式。
 2. 按事实归属和目录契约确定必要文件、名称、层级、入口与资源位置。迁移前列出旧路径到新所有者的映射；保留已有 ADR 和稳定网站入口，明确适配。
 3. 对照内容契约写入或审查：明确条件、默认值、失败、所有权、生命周期、兼容性和限制中适用的内容。未知信息写入交付缺口，不留下假装完成的占位内容。
-4. 实施初始化/整理时，把长期文档维护规则、实际采用的命名/分组/导航/资源约定写入目标 `AGENTS.md` / `docs/AGENTS.md` 或其项目内所有者，使后续会话无需再次调用本 Skill 也能遵守。全仓根指令只保存常驻要求；领域细则放所属文档。
+4. 实施初始化/整理时，把长期文档维护规则、实际采用的命名/分组/导航/资源约定写入目标 `AGENTS.md` / `docs/AGENTS.md` 或其项目内所有者，使后续会话无需再次调用本 Skill 也能遵守。根 AGENTS 按开发/评审任务指向工程与领域规范；docs/AGENTS 负责文档编写，不将其子树约束自动扩张到源码。全仓根指令只保存常驻要求；领域细则放所属文档。
 5. 修复实际受影响的引用。决策移到 implemented 时改成当前决定；LESSONS 晋升后完整规则只保留在正式规范。
 6. 运行机械检查，再按源码和实际操作核对语义。未运行的命令、未检查的外链/锚点、无法确认的实现分别说明。
 

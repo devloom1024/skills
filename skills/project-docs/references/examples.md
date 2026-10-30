@@ -9,7 +9,8 @@
 
 修改任务执行前读 docs/architecture.md 和 docs/subsystems/tasks.md，再核对 worker.py。
 行为变化时同步所属参考，运行 Python 示例和受影响的行为检查。
-配置读写修改前读 docs/defensive-patterns/configuration.md；文档更新遵守 docs/AGENTS.md。
+开发和评审前读 docs/standards/README.md，按改动选择规范。
+配置读写修改前读 docs/standards/defensive-patterns/configuration.md；文档更新遵守 docs/AGENTS.md。
 ```
 
 这里不展开状态机，不复制配置失败的完整防错规则。
@@ -50,7 +51,7 @@ run 接收可变字典，进入时无条件写 state=running，不检查初态�
 
 ## LESSONS 晋升示范
 
-三个不同日期的事故证明配置读取失败被误当空值并写回。当前完整防错规则由 `docs/defensive-patterns/configuration.md` 维护：读取失败中止写入、保留旧文件、区分有效空配置，并用故障输入核对文件字节未变化。LESSONS 仅保留主题、三个事件链接、已晋升状态和正式规则链接；根 AGENTS 只有阅读条件。
+三个不同日期的事故证明配置读取失败被误当空值并写回。当前完整防错规则由 `docs/standards/defensive-patterns/configuration.md` 维护：读取失败中止写入、保留旧文件、区分有效空配置，并用故障输入核对文件字节未变化。LESSONS 仅保留主题、三个事件链接、已晋升状态和正式规则链接；根 AGENTS 只有阅读条件。
 
 这比在三个文件反复维护相同长段落更容易保持一致，也让事故证据与现行要求都能找到。
 
@@ -73,17 +74,25 @@ docs/
     assets/
       install-plugin/
         settings.svg
-  defensive-patterns/
-    configuration.md
+  standards/
+    README.md
+    defensive-patterns/
+      configuration.md
   user/
     index.md
 ```
 
-约定写入 docs/AGENTS：子系统按契约平铺，每页拥有一个子系统；教程一篇一个管理员操作，动作加对象命名；资源归所属教程；user/index 是已有网站入口，保持路径，由它链接当前教程。领域防错只有一篇时可从根行动入口直接到达，不额外建空索引。
+约定写入 docs/AGENTS：子系统按契约平铺，每页拥有一个子系统；教程一篇一个管理员操作，动作加对象命名；资源归所属教程；user/index 是已有网站入口，保持路径，由它链接当前教程。standards 入口按修改对象指向正式规范，领域防错只有一篇时由该入口直接链接，不额外建 defensive-patterns 索引。
 
 subsystems/README 用「页面 → 拥有的语义」表导航 tasks 和 configuration，不重述状态机。cookbook/README 按任务选择并说明真实前提，例如安装签名插件与配置代理；用户指南通过原 index 到达相应教程，不复制安装步骤。教程的图片链接按所在文件位置为 `assets/install-plugin/settings.svg`。
 
 若旧 system.md 同时描述两个独立子系统，可以拆分并把所有入站引用指向实际语义所有者；旧页仅在仍需概览或兼容导航时保留。已有 guide.md 被公开链接引用时，先核对路由/别名能否保留，再决定是否重命名为 install-plugin.md。命名统一的收益不能自动覆盖稳定链接约定。
+
+## 开发规范的归属与等级
+
+若团队另已采纳 UTF-8 文件读写要求，其完整条款可由 standards/coding.md 拥有：适用于本项目文本读写，必须显式使用 UTF-8；目的是避免默认编码随环境变化；外部协议明确指定其他编码时保留来源和转换理由；用隔离的中文输入核对结果，不能写真实用户配置。同页若建议提前返回，应明确只是建议，不把等价控制流判错。规范入口链接此页，根指令只导航，不复制正文，也不虚构本项目曾发生编码事故。
+
+已有项目若把这些要求放在 docs/conventions/index.md、docs/conventions/python.md 和 docs/defensive-patterns/file-io.md，则保持这些路径，用文档标准声明它们分别承担规范入口、编码规范和领域防错角色，不生成竞争的 standards 树。原政策草稿移出完整规则后可保留导航；任何规则只维护一个正文。testing 拥有测试隔离与结果判断，规范页链接它，避免两处更新。
 
 ## 决策规范与专项操作
 

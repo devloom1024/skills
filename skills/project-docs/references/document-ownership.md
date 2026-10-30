@@ -19,10 +19,11 @@
 | 模块旁 `README.md` | 模块使用、配置、生命周期、扩展、局限 | 不叙述其他模块内部实现 |
 | `docs/development.md` | 环境和开发路径、命令用途 | 命令细目引用真实构建配置 |
 | `docs/testing.md` | 按改动选择验证，隔离和结果判断 | 特定用例与夹具说明靠近测试代码 |
+| `docs/standards/` | 项目已采纳的编码、依赖、设计和评审要求，明确适用范围与强制/建议性质 | 开发操作进 development，测试选择与隔离进 testing，当前接口事实进所属参考 |
 | `docs/cookbook/` | 贡献者的实现、集成或维护任务，从前提到验证与恢复；已有产品教程可按明确映射保留 | 设计原因链接 Agent Note，产品使用任务默认进 user |
 | `docs/user/` | 产品用户的起步路径与真实使用任务 | 贡献开发进 development，接口语义进所属参考 |
 | `.agents/notes/` | 活动提案或长期决定的理由、真实替代方案和后果 | 已实施当前契约仍以所属参考为主 |
-| `docs/defensive-patterns/` | 经项目采纳的正式防错要求，按领域分 | 事故叙事进入 postmortem，候选经验进 LESSONS |
+| `docs/standards/defensive-patterns/` | 经项目采纳的正式防错要求，按领域分；是开发规范的一类 | 事故叙事进入 postmortem，候选经验进 LESSONS；已有独立目录保留并映射 |
 | `docs/postmortem/` | 事故时间线、影响、根因和防复发证据 | 不作为当前接口参考 |
 | `LESSONS.md` | 尚未正式化的经验、重复证据、晋升索引 | 正式规则完整正文只有一个所有者 |
 | 仓库 Skills | 可复用操作流程和判断方法 | 产品契约留在 docs 或源码旁 |

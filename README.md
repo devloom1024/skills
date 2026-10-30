@@ -28,6 +28,8 @@ Skill 自包含，不需要此仓库的 `.cache`。目标项目的长期规则�
 
 四项 Skill 可分别安装。code-review 判断指定改动的正确性与回归；code-simplification 调查简化收益与代价；project-docs 建立文档规范并完成基本维护；decision-records 执行专项记录治理。它们都以目标项目自身约定为准，不要求其他 Skill 同时安装。
 
+project-docs 默认用 `docs/standards/` 组织正式开发规范，领域防错属于其 `defensive-patterns/`，已有规范路径保留并映射。根 AGENTS 提供开发/评审的阅读入口；code-review 按改动和所审版本读取实际适用规范，区分强制要求、建议与历史提案。
+
 ```text
 使用 $decision-records，审查本次改动涉及的决定，区分部分取代与实施完成，并在授权范围处理记录和引用。
 使用 $code-simplification，只读评估当前模块的简化机会，给出消费证据、维护收益和保留理由，不修改代码。
