@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目工作流"
+  short_description: "由 Agent 按 YAML 顺序串联多个 Skill，以阶段证据判断条件并报告执行结果"
+  default_prompt: "使用 $project-workflow，读取指定的项目 workflow YAML，在本次任务授权范围内依次执行，核对条件与阶段证据并报告剩余问题。"

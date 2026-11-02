@@ -1,0 +1,40 @@
+version: 1
+name: quality-maintenance
+description: 在本次授权范围内简化代码，评审实际改动并维护文档。
+
+steps:
+  - id: simplify
+    name: 代码简化
+    skills:
+      - name: code-simplification
+        instruction: |
+          按本次用户指定范围评估简化机会，保留必要能力和项目约定。
+          只有本次请求已授权实施时才做值得做的局部简化，并完成适用验证。
+          交付候选或实际改动、保留义务、验证证据和剩余问题。
+
+  - id: review
+    name: 评审改动
+    when:
+      step: simplify
+      field: changed
+      equals: true
+    skills:
+      - name: code-review
+        instruction: |
+          评审本轮简化实际产生的改动，区分用户原有修改。
+          核对正确性、回归、项目规范及同版本验证证据。
+          报告发现和未解决事项，不将只读评审视为修复或提交授权。
+
+  - id: docs
+    name: 文档同步
+    when:
+      all:
+        - {step: simplify, field: changed, equals: true}
+        - {step: review, field: status, equals: completed}
+        - {step: review, field: has_unresolved, equals: false}
+    skills:
+      - name: project-docs
+        instruction: |
+          根据最终改动和评审证据处理受影响的现有文档。
+          本次请求只读时仅报告需同步项，不写文件；有文档维护授权时实施更新。
+          仅在有真实返工或漏检证据时维护 LESSONS；无需变化时说明无需更新。
