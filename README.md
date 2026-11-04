@@ -25,7 +25,7 @@
 使用 $project-docs，只审查当前文档，报告事实归属、内容缺口与验证证据。
 ```
 
-Skill 自包含，不需要此仓库的 `.cache`。目标项目的长期规则保存在其自身文档中，不依赖每次重新调用 Skill。
+`skills/<skill-name>/` 保存安装和使用所需的指令、参考、模板、脚本及运行依赖说明。开发测试、验收场景和评估记录集中在仓库 `tests/<skill-name>/`，临时评估项目留在忽略的 `.cache/`；安装时只复制所需 Skill 目录，无需复制 tests 或 .cache。目标项目的长期规则保存在其自身文档中，不依赖每次重新调用 Skill。
 
 前四项专项 Skill 可分别安装：code-review 判断改动的正确性与回归；code-simplification 调查简化收益与代价；project-docs 建立文档规范并完成基本维护；decision-records 执行专项记录治理。project-workflow 按 YAML 串联任务，另需让 YAML 中列出的 Skill 在当前环境可用。它们都以目标项目自身约定为准。
 
@@ -50,16 +50,18 @@ Agent 会依次简化、评审、同步文档，按实际修改和未解决事�
 
 文档和归档检查器需要 Python 3.10+，仅用标准库。文档检查说明和范围见 [checker](skills/project-docs/references/checker.md)。workflow 格式校验器另需 PyYAML 6，使用已有或隔离环境，依赖与人工替代见其格式说明；它只读校验配置，不执行 Skill。
 
+以下命令在仓库根目录执行。测试代码、行为验收场景和评估结果按 Skill 存放在 [tests](tests/)；文档检查器的相对配置路径以被检查的 Skill 目录为基准，因此使用 `../../tests/<skill-name>/skill-doc-rules.json`。
+
 ```text
-python -m unittest discover -s skills/project-docs/tests -p test_*.py -v
-python skills/project-docs/scripts/check_docs.py skills/project-docs --config tests/skill-doc-rules.json
+python -B -m unittest discover -s tests/project-docs -p test_*.py -v
+python skills/project-docs/scripts/check_docs.py skills/project-docs --config ../../tests/project-docs/skill-doc-rules.json
 python skills/project-docs/scripts/check_docs.py <目标项目根目录>
-python -m unittest discover -s skills/decision-records/tests -p test_*.py -v
-python skills/project-docs/scripts/check_docs.py skills/decision-records --config tests/skill-doc-rules.json
+python -B -m unittest discover -s tests/decision-records -p test_*.py -v
+python skills/project-docs/scripts/check_docs.py skills/decision-records --config ../../tests/decision-records/skill-doc-rules.json
 python skills/decision-records/scripts/archive_records.py verify <目标项目根目录> --json
-python skills/project-docs/scripts/check_docs.py skills/code-simplification --config tests/skill-doc-rules.json
-python skills/project-docs/scripts/check_docs.py skills/code-review --config tests/skill-doc-rules.json
-python skills/project-docs/scripts/check_docs.py skills/project-workflow --config tests/skill-doc-rules.json
+python skills/project-docs/scripts/check_docs.py skills/code-simplification --config ../../tests/code-simplification/skill-doc-rules.json
+python skills/project-docs/scripts/check_docs.py skills/code-review --config ../../tests/code-review/skill-doc-rules.json
+python skills/project-docs/scripts/check_docs.py skills/project-workflow --config ../../tests/project-workflow/skill-doc-rules.json
 python skills/project-workflow/scripts/check_workflow.py skills/project-workflow/assets/workflows/quality-maintenance.yml --json
-python -B -m unittest discover -s skills/project-workflow/tests -p test_*.py -v
+python -B -m unittest discover -s tests/project-workflow -p test_*.py -v
 ```

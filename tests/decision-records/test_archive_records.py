@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'scripts' / 'archive_records.py'
+SCRIPT = Path(__file__).resolve().parents[2] / 'skills' / 'decision-records' / 'scripts' / 'archive_records.py'
 
 
 class ArchiveTests(unittest.TestCase):

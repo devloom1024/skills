@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'scripts' / 'check_workflow.py'
+SCRIPT = Path(__file__).resolve().parents[2] / 'skills' / 'project-workflow' / 'scripts' / 'check_workflow.py'
 VALID = '''version: 1
 name: sample
 steps:
