@@ -125,81 +125,19 @@ class CheckDocsTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("budget-file", self.codes(report))
 
-    def note(self, lifecycle, status, body, topic="2026-10-29-task.md"):
-        return self.write(f".agents/notes/{lifecycle}/architecture/{topic}",
-                          f"# Agent Note: Task\n\nStatus: {status}\n\n{body}")
 
-    def test_implemented_note_checks_state_and_sections(self):
-        self.note("implemented", "proposed", "## Problem\n\n## Proposal\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("note-status", self.codes(report))
-        self.assertIn("note-sections", self.codes(report))
-
-    def test_implemented_note_cannot_keep_proposal_sections(self):
-        self.note("implemented", "implemented", "## Problem\nP\n## Decision\nD\n"
-                  "## Alternatives considered\nA\n## Consequences\nC\n## Plan\nLater\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("note-sections", self.codes(report))
-
-    def test_chinese_note_headings_are_supported(self):
-        self.note("implemented", "implemented", "## 问题\nP\n## 决定\nD\n"
-                  "## 考虑过的替代方案\nA\n## 后果\nC\n")
+    def test_notes_are_delegated_and_not_read(self):
+        self.write(".agents/notes/archived/sample.md", "[old](missing.md)\nTODO\n")
         code, report = self.check()
         self.assertEqual(code, 0, report)
+        self.assertEqual(report["scope"]["files_checked"], 2)
+        self.assertFalse(report["scope"]["notes_validation"])
+        self.assertIn(".agents/notes", report["scope"]["default_excluded_paths"])
 
-    def test_note_tree_instruction_and_navigation_files_are_not_notes(self):
-        self.write('.agents/notes/implemented/AGENTS.md', '# Note rules\n\nWrite current facts.\n')
-        self.write('.agents/notes/implemented/architecture/README.md', '# Architecture decisions\n')
-        code, report = self.check()
-        self.assertEqual(code, 0, report)
-
-    def test_proposed_and_rejected_notes(self):
-        body = "## Problem\nP\n## Proposal\nD\n## Alternatives considered\nA\n"
-        self.note("proposed", "proposed", body + "## Acceptance criteria\nX\n## Risks\nR\n")
-        self.note("rejected", "rejected — no current need", body)
-        code, report = self.check()
-        self.assertEqual(code, 0, report)
-
-    def test_rejected_note_needs_reason(self):
-        self.note("rejected", "rejected", "## Problem\nP\n## Proposal\nD\n## Alternatives considered\nA\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("note-status", self.codes(report))
-
-    def test_note_date_and_class_are_validated(self):
-        self.write(".agents/notes/implemented/random/2026-02-30-task.md", "# Agent Note: X\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("note-path", self.codes(report))
-
-    def test_empty_note_sections_fail(self):
-        self.note("implemented", "implemented", "## Problem\n## Decision\n"
-                  "## Alternatives considered\n## Consequences\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("note-content", self.codes(report))
-
-    def test_archive_content_is_frozen_history_and_reference_warns(self):
-        self.note("archived", "implemented", "Archived: 2026-10-29\n\n[old](gone.md)\nTODO\n")
-        self.write("history.md", "历史依据：[record](.agents/notes/archived/architecture/2026-10-29-task.md)\n")
-        code, report = self.check()
-        self.assertEqual(code, 0, report)
-        self.assertIn("archive-reference", self.codes(report))
-        self.assertEqual(report["summary"]["errors"], 0)
-
-    def test_archive_requires_date(self):
-        self.note("archived", "implemented", "Old history\n")
-        code, report = self.check()
-        self.assertEqual(code, 1)
-        self.assertIn("archive-date", self.codes(report))
-
-    def test_existing_adr_mapping_skips_canonical_format_and_reports_limit(self):
-        self.write("docs/adr/0001-local.md", "# Choice\n\nStatus: accepted\n")
-        code, report = self.check({"note_roots": [{"path": "docs/adr", "format": "external"}]})
-        self.assertEqual(code, 0, report)
-        self.assertIn("external-notes", self.codes(report))
+    def test_note_config_requires_explicit_migration(self):
+        code, report = self.check({"note_roots": []})
+        self.assertEqual(code, 2)
+        self.assertIn("configuration", self.codes(report))
 
     def test_invalid_config_returns_two(self):
         for config in ({"typo": []}, {"required_files": "AGENTS.md"},
@@ -252,12 +190,6 @@ class CheckDocsTests(unittest.TestCase):
         self.assertEqual(code, 2, report)
         self.assertIn('configuration', self.codes(report))
 
-    def test_archive_still_honors_explicit_budget(self):
-        path = self.note('archived', 'implemented', 'Archived: 2026-10-29\n\nHistory\n')
-        code, report = self.check({'budgets': {
-            path.relative_to(self.root).as_posix(): {'metric': 'words', 'max': 1}}})
-        self.assertEqual(code, 1, report)
-        self.assertIn('budget', self.codes(report))
 
     def test_required_file_in_symlinked_directory_is_not_silently_skipped(self):
         self.write('rules/rules.md', '# rules\n')

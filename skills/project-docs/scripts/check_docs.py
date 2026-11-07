@@ -1,6 +1,5 @@
 """Read-only documentation checks; Python 3.10+, standard library only."""
 import argparse
-from datetime import date
 import fnmatch
 import json
 import os
@@ -12,16 +11,9 @@ from urllib.parse import unquote
 
 EXCLUDED = {".git", ".cache", "node_modules", "vendor", ".venv", "venv",
             "__pycache__", "dist", "build", "target", "coverage", ".generated"}
-CLASSES = {"feature", "bug-fix", "simplification", "architecture", "process", "testing"}
-SECTIONS = {
-    "problem": ("Problem", "问题"), "proposal": ("Proposal", "提案"),
-    "decision": ("Decision", "决定"),
-    "alternatives": ("Alternatives considered", "考虑过的替代方案"),
-    "acceptance": ("Acceptance criteria", "验收标准"), "risks": ("Risks", "风险"),
-    "consequences": ("Consequences", "后果"),
-}
-DEFAULTS = {"required_files": ["AGENTS.md", "docs/AGENTS.md"], "exclude": [],
-            "note_roots": [{"path": ".agents/notes", "format": "agent-note"}], "budgets": {}}
+# Agent Notes are owned and checked by the external Notes Skill.
+EXCLUDED_PATHS = {".agents/notes"}
+DEFAULTS = {"required_files": ["AGENTS.md", "docs/AGENTS.md"], "exclude": [], "budgets": {}}
 
 
 def safe_relative(value):
@@ -45,12 +37,6 @@ def load_config(root, filename):
     for key in ("required_files", "exclude"):
         if not isinstance(config[key], list) or not all(safe_relative(v) for v in config[key]):
             raise ValueError(f"{key} must contain project-relative paths or patterns")
-    if not isinstance(config["note_roots"], list):
-        raise ValueError("note_roots must be a list")
-    for item in config["note_roots"]:
-        if (not isinstance(item, dict) or set(item) != {"path", "format"}
-                or not safe_relative(item["path"]) or item["format"] not in ("agent-note", "external")):
-            raise ValueError("each note root needs a relative path and agent-note/external format")
     if not isinstance(config["budgets"], dict):
         raise ValueError("budgets must be an object")
     for path, item in config["budgets"].items():
@@ -62,17 +48,13 @@ def load_config(root, filename):
     for path in config["required_files"] + list(config["budgets"]):
         if ignored(path, config):
             raise ValueError(f"required or budgeted file is excluded: {path}")
-    roots = [PurePosixPath(item["path"]).parts for item in config["note_roots"]]
-    for i, first in enumerate(roots):
-        if any(first[:len(other)] == other or other[:len(first)] == first for other in roots[i + 1:]):
-            raise ValueError("note roots must not overlap")
     return config
 
 
 def ignored(relative, config):
     parts = PurePosixPath(relative).parts
     ancestors = ["/".join(parts[:end]) for end in range(1, len(parts) + 1)]
-    return any(part in EXCLUDED for part in parts) or any(
+    return any(part in EXCLUDED for part in parts) or any(path in EXCLUDED_PATHS for path in ancestors) or any(
         fnmatch.fnmatchcase(candidate, pattern) or candidate == pattern.rstrip("/**")
         for pattern in config["exclude"] for candidate in ancestors)
 
@@ -177,63 +159,6 @@ class Audit:
         except (OSError, RuntimeError):
             return False
 
-    def note_location(self, relative):
-        for item in self.config["note_roots"]:
-            try:
-                parts = PurePosixPath(relative).relative_to(item["path"]).parts
-                if parts and parts[-1] in ("README.md", "AGENTS.md", "CLAUDE.md"):
-                    return None
-                if parts:
-                    return item, parts
-            except ValueError:
-                pass
-        return None
-
-    def note(self, relative, text, location):
-        item, parts = location
-        if item["format"] == "external":
-            return False
-        archived = parts[0] == "archived"
-        valid_path = len(parts) == 3 and parts[0] in ("proposed", "implemented", "rejected", "archived") and parts[1] in CLASSES
-        filename = re.fullmatch(r"(\d{4}-\d{2}-\d{2})-[a-z0-9][a-z0-9-]*\.md", parts[-1])
-        try:
-            valid_path = valid_path and filename is not None
-            if filename:
-                date.fromisoformat(filename[1])
-        except ValueError:
-            valid_path = False
-        if not valid_path:
-            self.add("note-path", "Use lifecycle/class/YYYY-MM-DD-topic.md with a real date and supported class", relative)
-        status = re.search(r"^Status:\s*(.+)$", text, re.M)
-        expected = "implemented" if archived else parts[0]
-        actual = status[1].strip() if status else ""
-        if (expected == "rejected" and not re.fullmatch(r"rejected\s+[—-]\s+\S.*", actual)) or (expected != "rejected" and actual != expected):
-            self.add("note-status", f"Status must agree with {expected}; rejection needs a reason", relative)
-        if not re.match(r"\A# Agent Note: .+\n\nStatus: .+\n", text):
-            self.add("note-header", "Start with # Agent Note: title, blank line, and Status: value", relative)
-        if archived:
-            stamp = re.search(r"^Archived: (\d{4}-\d{2}-\d{2})$", text, re.M)
-            try:
-                date.fromisoformat(stamp[1] if stamp else "")
-            except ValueError:
-                self.add("archive-date", "Archive needs a valid Archived: YYYY-MM-DD line", relative)
-            return True
-        headings = list(re.finditer(r"^## (.+)$", prose(text), re.M))
-        bodies = {m[1].strip(): prose(text)[m.end():headings[i + 1].start() if i + 1 < len(headings) else None].strip()
-                  for i, m in enumerate(headings)}
-        required = ["problem", "alternatives"] + ({"proposed": ["proposal", "acceptance", "risks"],
-                    "implemented": ["decision", "consequences"], "rejected": ["proposal"]}.get(expected, []))
-        for key in required:
-            name = next((name for name in SECTIONS[key] if name in bodies), None)
-            if name is None:
-                self.add("note-sections", f"Missing section: {SECTIONS[key][0]}", relative)
-            elif not bodies[name]:
-                self.add("note-content", f"Empty section: {name}", relative)
-        if expected == "implemented" and any(name in bodies for name in
-                ("Proposal", "提案", "Plan", "计划", "Migration plan", "迁移计划", "Acceptance criteria", "验收标准", "Risks", "风险")):
-            self.add("note-sections", "Implemented notes describe current decisions; remove proposal-era headings", relative)
-        return False
-
     def check_file(self, path):
         relative = path.relative_to(self.root).as_posix()
         if not self.inside(path):
@@ -252,9 +177,6 @@ class Audit:
             count = count_units(source, budget["metric"])
             if count > budget["max"]:
                 self.add("budget", f"{count} {budget['metric']} units exceeds {budget['max']}; relocate, condense, or justify a new ceiling", relative)
-        location = self.note_location(relative)
-        if location and self.note(relative, source, location):
-            return
         text = prose(source)
         for number, line in enumerate(text.splitlines(), 1):
             if re.search(r"\{\{[^{}\n]+\}\}|\b(?:TODO|TBD)\b|待填写", line):
@@ -272,10 +194,6 @@ class Audit:
                 self.add("outside-root", f"Link escapes project: {target}", relative, line)
             elif not resolved.exists():
                 self.add("local-link", f"Missing local target: {target}", relative, line)
-            else:
-                note = self.note_location(resolved.resolve().relative_to(self.root).as_posix())
-                if note and note[0]["format"] == "agent-note" and note[1][0] == "archived":
-                    self.add("archive-reference", "Confirm this cites history, not current authority", relative, line, "warning")
 
     def run(self):
         for relative in self.config["required_files"]:
@@ -285,9 +203,6 @@ class Audit:
         for relative in self.config["budgets"]:
             if not (self.root / relative).is_file():
                 self.add("budget-file", "Budgeted file is missing", relative)
-        for item in self.config["note_roots"]:
-            if item["format"] == "external":
-                self.add("external-notes", "Existing decision format is preserved; review its states and content manually", item["path"], severity="warning")
         def walk_error(error):
             self.operational = True
             self.add("read-error", str(error))
@@ -319,7 +234,8 @@ class Audit:
         return {"scope": {"root": str(self.root), "files_checked": self.count,
                           "required_files": self.config["required_files"], "exclude": self.config["exclude"],
                           "default_excluded_directories": sorted(EXCLUDED),
-                          "note_roots": self.config["note_roots"], "budgeted_files": sorted(self.config["budgets"]),
+                          "default_excluded_paths": sorted(EXCLUDED_PATHS),
+                          "budgeted_files": sorted(self.config["budgets"]), "notes_validation": False,
                           "semantic_validation": False, "anchor_validation": False, "external_links": False},
                 "findings": self.findings,
                 "summary": {"errors": sum(f["severity"] == "error" for f in self.findings),

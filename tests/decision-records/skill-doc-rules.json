@@ -1,5 +1,0 @@
-{
-  "required_files": ["SKILL.md", "references/archive.md", "references/workflows.md"],
-  "exclude": ["assets/templates/**"],
-  "note_roots": []
-}

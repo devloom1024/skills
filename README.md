@@ -4,64 +4,68 @@
 
 | Skill | 用途 |
 |---|---|
-| [project-docs](skills/project-docs/SKILL.md) | 建立和维护项目文档分层、内容契约、Agent 指令、决策记录及 LESSONS 晋升机制 |
-| [decision-records](skills/decision-records/SKILL.md) | 创建与治理项目决策记录，核对实施、取代与合并，封存归档并验证冻结历史 |
-| [code-simplification](skills/code-simplification/SKILL.md) | 基于生产消费证据和净维护成本发现、评估并实施明确授权的代码简化 |
-| [code-review](skills/code-review/SKILL.md) | 固定评审范围与版本，追踪完整行为路径，区分已证实缺陷、验证缺口与设计建议 |
-| [project-workflow](skills/project-workflow/SKILL.md) | 由 Agent 读取 workflow YAML，按顺序和条件串联多个 Skill，以实际证据汇总阶段结果 |
+| [project-docs](skills/project-docs/SKILL.md) | 建立、迁入和持续维护工程上下文：AGENTS 常驻工程规则、docs 与模块当前参考、外部 Agent Notes 接入 |
+| [code-simplification](skills/code-simplification/SKILL.md) | 基于消费证据和净维护成本发现、评估并实施授权的代码简化 |
+| [code-review](skills/code-review/SKILL.md) | 固定范围与版本，追踪行为路径，区分已证实缺陷、验证缺口与建议 |
+| [project-workflow](skills/project-workflow/SKILL.md) | 按 workflow YAML 串联多个 Skill，以实际证据汇总结果 |
 
-`project-docs` 是对 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 文档组织、内容要求和维护经验的学习与总结，并参考 [Magpie](https://github.com/yetone/magpie) 的 LESSONS 机制。Skill 本身独立定义规范和流程，不依赖这些项目。
+## project-docs 重写稿
 
-`code-simplification` 学习并提炼了 DeepSeek Harness 的简化审查方法，采用独立规范与案例，不依赖参考仓库。
+当前规范版本为 `2026.11.07-draft.1`，待用户审阅，尚未进行本版行为评估。已有评估记录仅代表旧版本，本次没有重新运行检查器测试或项目样本。
 
-`code-review` 学习并提炼了该项目的代码评审方法，将范围固定、语义审查和验证证据组织为独立流程，不带其框架专有规则。
+方法来源于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的工程上下文实践，参考 [项目维护方式介绍](https://linux.do/t/topic/2904342) 和 [Agent Notes Skill 介绍](https://linux.do/t/topic/2874256)。目标是让新会话找到当前系统事实、既有约束和设计取舍，在改动中同步维护。
 
-## 使用
+总体布局与职责连接见 [项目结构总则](skills/project-docs/references/standards/README.md)，各部分详细规范如下。
 
-将需要的 `skills/<skill-name>` 目录放入所用 agent 支持的 Skill 搜索目录，然后请求：
+| 职责域 | 标准入口 |
+|---|---|
+| 根与子树 AGENTS.md | [全仓与局部常驻工程规则](skills/project-docs/references/standards/agents.md) |
+| docs 与模块参考 | [文档总则、布局与专项规范](skills/project-docs/references/standards/docs/README.md) |
+| Agent Notes | [外部 Skill 接入与信息连接](skills/project-docs/references/standards/notes.md) |
+
+规范和场景分开：[初始化](skills/project-docs/references/scenarios/initialize.md) 建立最小体系；[迁移](skills/project-docs/references/scenarios/migrate.md) 核对、迁入和清理已有材料；[维护](skills/project-docs/references/scenarios/maintain.md) 同步后续变化、检查漂移与升级规则。声明版本不代表迁移完成，未处置内容保持部分采用状态。
+
+Notes 的具体协议和专用工具统一使用外部 [write-notes-like-deepseek](https://github.com/czm15053/write-notes-like-deepseek/tree/main/skills/write-notes-like-deepseek)。本仓库已移除高度重叠的 decision-records Skill 及其专用测试；已有使用者应读取外部实际版本，按 [接入规范](skills/project-docs/references/standards/notes.md) 迁移规则与命令，不能假设安装后项目脚本已自动生效。本次未安装外部 Skill，也未迁移任何下游项目。
+
+## 安装与使用
+
+将需要的 `skills/<skill-name>` 放入当前 agent 支持的 Skill 搜索位置。project-docs 会自行探测上述外部 Notes Skill；缺失时询问用户选择项目或全局安装，选择后通过 `npx skills add` 自动安装并读取，无需用户手工执行。已可用则复用；用户可以暂不安装，此时明确 Notes 接入未完成，不生成本地替代协议。具体命令与失败处理见 [Notes 接入规范](skills/project-docs/references/standards/notes.md#自动安装命令)。
 
 ```text
-使用 $project-docs，分析当前代码和已有文档，建立项目文档组织与内容规范，保留现有用户约束。
-使用 $project-docs，只审查当前文档，报告事实归属、内容缺口与验证证据。
+使用 $project-docs，为这个空项目建立最小工程上下文。
+使用 $project-docs，分析旧项目，输出目标结构和逐份迁移映射，只给方案。
+使用 $project-docs，按统一标准完成文档迁移，保留有效事实和理由，修复全部受影响消费者并清理旧位置。
+使用 $project-docs，根据本次开发结果更新受影响参考、行动入口和相关决定。
+使用 $project-docs，只检查文档漂移，报告证据，不修改。
 ```
 
-`skills/<skill-name>/` 保存安装和使用所需的指令、参考、模板、脚本及运行依赖说明。开发测试、验收场景和评估记录集中在仓库 `tests/<skill-name>/`，临时评估项目留在忽略的 `.cache/`；安装时只复制所需 Skill 目录，无需复制 tests 或 .cache。目标项目的长期规则保存在其自身文档中，不依赖每次重新调用 Skill。
+长期规则保存在目标项目自身指令中，基本阅读与事实维护无需每次重新调用本 Skill；专用 Notes 操作按已接入的外部能力执行。不把作者本机路径写入目标项目。
 
-前四项专项 Skill 可分别安装：code-review 判断改动的正确性与回归；code-simplification 调查简化收益与代价；project-docs 建立文档规范并完成基本维护；decision-records 执行专项记录治理。project-workflow 按 YAML 串联任务，另需让 YAML 中列出的 Skill 在当前环境可用。它们都以目标项目自身约定为准。
-
-project-docs 默认用 `docs/standards/` 组织正式开发规范，领域防错属于其 `defensive-patterns/`，已有规范路径保留并映射。根 AGENTS 提供开发/评审的阅读入口；code-review 按改动和所审版本读取实际适用规范，区分强制要求、建议与历史提案。
+code-simplification 与 code-review 分别学习了 DeepSeek Harness 的简化调查和证据评审方法，仍可独立使用。project-workflow 要求当前环境具备 YAML 中实际列出的 Skill。
 
 ```text
-使用 $decision-records，审查本次改动涉及的决定，区分部分取代与实施完成，并在授权范围处理记录和引用。
-使用 $code-simplification，只读评估当前模块的简化机会，给出消费证据、维护收益和保留理由，不修改代码。
-使用 $code-review，只读评审当前暂存、未暂存和未跟踪改动，报告已证实缺陷、验证缺口与实际检查范围。
+使用 $code-simplification，只读调查当前模块的简化机会。
+使用 $code-review，只读评审当前改动，报告已证实问题和验证范围。
 ```
 
-串联质量维护时，将 [quality-maintenance.yml](skills/project-workflow/assets/workflows/quality-maintenance.yml) 复制到目标项目的 `.agents/workflows/` 或现有工作流目录，使 project-workflow 和示例列出的三个专项 Skill 可用，再明确本次范围与授权：
+串联任务可复制 [quality-maintenance.yml](skills/project-workflow/assets/workflows/quality-maintenance.yml) 到项目工作流目录，明确范围和授权后调用 project-workflow。示例依次简化、评审、同步文档，条件和失败处理见 [workflow 格式](skills/project-workflow/references/workflow-format.md)。Notes 需要发生实际操作时再遵循其依赖和协议。
+
+## 工具与历史记录
+
+Skill 安装内容在 `skills/`，开发测试与历史记录在 [tests](tests/)，临时材料在忽略的 `.cache/`。安装不需要复制 tests 或 .cache。
+
+**文档检查能力须落到目标仓库。** 优先复用已有等效工具；否则将自带脚本接入项目，配置逐文件预算，纳入版本管理并提供本地入口；已有 CI 同时接入。来源记录、升级和检查边界见 [文档检查器](skills/project-docs/references/tools/check-docs.md)。
+
+自带脚本是 Python 3.10+ 标准库工具，只覆盖一般 Markdown、必要入口与显式预算，Notes 专用规则交由外部工具。旧 `note_roots` 配置已移除，现有使用者需显式处理决策目录的外部验证范围。workflow 校验器另需 PyYAML 6，仅检查配置，不执行任务。
+
+以下为可用命令说明，本版草稿尚未运行这些测试或行为评估：
 
 ```text
-使用 $project-workflow，执行 .agents/workflows/quality-maintenance.yml。
-本次只处理 src/parser 的局部保行为简化，允许修改相关源码和文档，不提交。
-```
-
-Agent 会依次简化、评审、同步文档，按实际修改和未解决事项判断条件；没有改动时后续阶段跳过，失败或条件未知时停止并报告。支持一个 step 串多个 Skill，字段及示例见 [workflow 格式](skills/project-workflow/references/workflow-format.md)。未发现问题也不代表穷尽验证。
-
-## 验证
-
-文档和归档检查器需要 Python 3.10+，仅用标准库。文档检查说明和范围见 [checker](skills/project-docs/references/checker.md)。workflow 格式校验器另需 PyYAML 6，使用已有或隔离环境，依赖与人工替代见其格式说明；它只读校验配置，不执行 Skill。
-
-以下命令在仓库根目录执行。测试代码、行为验收场景和评估结果按 Skill 存放在 [tests](tests/)；文档检查器的相对配置路径以被检查的 Skill 目录为基准，因此使用 `../../tests/<skill-name>/skill-doc-rules.json`。
-
-```text
-python -B -m unittest discover -s tests/project-docs -p test_*.py -v
+python skills/project-docs/scripts/check_docs.py <目标项目根目录> --json
 python skills/project-docs/scripts/check_docs.py skills/project-docs --config ../../tests/project-docs/skill-doc-rules.json
-python skills/project-docs/scripts/check_docs.py <目标项目根目录>
-python -B -m unittest discover -s tests/decision-records -p test_*.py -v
-python skills/project-docs/scripts/check_docs.py skills/decision-records --config ../../tests/decision-records/skill-doc-rules.json
-python skills/decision-records/scripts/archive_records.py verify <目标项目根目录> --json
-python skills/project-docs/scripts/check_docs.py skills/code-simplification --config ../../tests/code-simplification/skill-doc-rules.json
-python skills/project-docs/scripts/check_docs.py skills/code-review --config ../../tests/code-review/skill-doc-rules.json
-python skills/project-docs/scripts/check_docs.py skills/project-workflow --config ../../tests/project-workflow/skill-doc-rules.json
+python -B -m unittest discover -s tests/project-docs -p test_*.py -v
 python skills/project-workflow/scripts/check_workflow.py skills/project-workflow/assets/workflows/quality-maintenance.yml --json
 python -B -m unittest discover -s tests/project-workflow -p test_*.py -v
 ```
+
+其他 Skill 的检查配置在各自 tests 目录。实际执行和行为评估待用户审阅草稿后决定，历史通过记录不能为本版背书。

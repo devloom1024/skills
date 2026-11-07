@@ -1,68 +1,54 @@
 ---
 name: project-docs
-description: Use when a project needs agent-facing documentation organization, AGENTS.md guidance, document content standards, documentation migration or audit, decision-record lifecycle maintenance, or an evidence-based LESSONS.md process. 不用于仅润色文字、普通功能开发或与项目文档组织无关的文件操作。
+description: Use when establishing engineering documentation for an empty project, migrating an existing documentation tree into a unified standard, or updating an adopted project's instructions and documentation after development. Covers root/subtree AGENTS.md, docs and module references, and integration with the external write-notes-like-deepseek Skill for Agent Notes. Also use for scoped documentation audits and maintenance. 不用于仅润色文字，也不因普通功能任务自动重组全仓。
 ---
 
-# 项目文档组织与内容规范
+# 项目工程上下文
 
-建立清晰的文档职责、内容契约和维护流程，通过有证据的 LESSONS 持续改进项目规范。成功是 agent 能找到当前事实、正确修改项目并验证结果；目录齐全或标题齐全不足以证明完成。
+规范版本：2026.11.07-draft.1。此版本是待用户审阅的重写稿，尚未进行行为评估。
 
-## 范围与不可省略的约束
+让没有历史对话的人和 agent 能找到当前事实、理解既有约束与被否决方案，正确修改项目，并同步维护这些信息。目录、标题、版本声明或检查器通过都不足以证明采用完成。
 
-- 保留用户约束、已有事实、文档语言、工具链和有效引用。先读目标项目实际生效的指令，不能用模板覆盖。
-- 先查源码、构建配置、测试和已有文档，再写项目事实。命令未运行、实现不存在、证据不足，分别如实报告，不能补成已验证能力。
-- 按实际信息创建文档。空项目只建立最小入口、文档标准和必要的经验记录；不生成虚构架构、假替代方案或空目录。
-- 一项事实只有一个维护位置。跨文档只保留导航和必要摘要；上层解释直接子层职责，不复制其细节。
-- Skill 自包含；不要求目标项目安装另一个 Skill、克隆额外仓库、连接特定服务或自动提交。
+## 规范入口
 
-## 选择流程
+先读 [项目结构总则](references/standards/README.md)，理解 AGENTS、docs 与模块参考、Notes 的位置、职责和连接，再进入相关详细规范。
 
-所有模式先读 [组织规则](references/document-ownership.md)；初始化、迁移、目录审查、新增页面或改变分组时读 [目录内部组织](references/directory-layout.md)；准备写哪类文档，再读 [对应内容契约](references/content-contracts.md)。
+## 按项目状态选择场景
 
-| 用户任务 | 再读 | 输出范围 |
+| 实际状态 | 执行流程 | 完成结果 |
 |---|---|---|
-| 新项目建立规范 | [采用与迁移](references/adoption.md) | 最小入口、可持续执行的项目规则、当前有依据的文档 |
-| 整理现有文档 | [采用与迁移](references/adoption.md) | 归属映射、迁移、引用修复；保留用户规则 |
-| 同步变更、处理设计或教训 | [维护](references/maintenance.md)，涉及时读 [决策](references/decision-records.md) / [LESSONS](references/lessons.md) | 仅更新受影响的所有者和引用 |
-| 检查文档质量 | [维护](references/maintenance.md) | 默认只读，逐项给证据、影响和修复建议 |
-| 提炼或维护开发教程 | [Cookbook 编写流程](references/cookbook-authoring.md) | 从真实任务核对前提、步骤、验证和持续维护 |
+| 没有成体系文档，或尚无实现 | [初始化](references/scenarios/initialize.md) | 最小行动入口、项目内规则与按需增长方式 |
+| 已有文档尚未符合本规范，或采用中仍有旧材料 | [迁移](references/scenarios/migrate.md) | 有效信息迁入、消费者修复、旧位置完成处置 |
+| 已完成采用，需要随开发更新或检查漂移 | [维护](references/scenarios/maintain.md) | 本次影响范围内的规则、事实、决定与实现一致 |
 
-普通功能开发不触发全仓文档重组。需要示范深度时读 [一致示例](references/examples.md)，仅复制适用的 [模板](assets/templates/)，填写事实并删除不适用部分。
+不能只因项目写了基线版本就选维护。核对实际归属与旧树处置；部分采用仍按迁移处理未完成范围。普通开发只维护受影响所有者，不自动重组全仓。
 
-整理项目开发规范时，默认由 `docs/standards/` 拥有已采纳的工程要求，领域防错要求放其 `defensive-patterns/` 子目录；已有 conventions、独立防错目录等保留并映射。按 [目录契约](references/directory-layout.md) 和 [规范内容契约](references/content-contracts.md#项目开发规范) 建立任务导航、规则等级和判断依据，不凭模板创造标准。
+只要求分析时输出目标结构、迁移映射或维护建议；授权实施时完成对应流程。遵守用户本轮和此前有效授权，不另设强制审批、提交或发布流程。未解决且影响实施的真实选择集中提出，环境里查得到的事实先自行查明。
 
-## 与决策专项治理协作
+## 开始工作
 
-本 Skill 定义文档体系、决策内容与格式要求，并把实际规则写入目标项目。创建前查重、维护单条决定、确认实施范围等基本操作见 [决策规范](references/decision-records.md)，不依赖另一个 Skill 安装。
+1. 确认项目根目录、范围和用户限制。读取实际生效的 `AGENTS.md`、兼容指令、入口、相关实现、配置、测试与现有决定。
+2. 读取项目结构总则、相关职责规范和选定场景。涉及 docs 时先读文档总则，再只读本次适用的专项规范。检查外部 Notes Skill 是否可用；缺失时按接入规范询问安装范围，并在用户选择后自动安装。
+3. 确定信息所有者与读取路径。当前事实核对源码和实际消费者；旧文档提供线索，不自动代表现状。命令未运行、实现未完成与证据不足分别说明。
+4. 执行场景流程，按 [检查器接入](references/tools/check-docs.md) 落实项目内工具、文件预算与本地/CI 入口。项目规则保留用户有效要求；语言沿用明确约定，无约定时沿用现有正文语言。Notes 的协议和语言按外部规范及用户要求处理。
+5. 在授权范围内执行适用检查，报告未执行部分。用户只要求草稿或明确不评估时，交付草稿和未验证范围，不擅自开展行为评估。
 
-独立的 decision-records 可在可用时执行取代分析、合并清理和冻结归档等专项流程。两者先读同一份目标项目决策约定，不各自覆盖项目规则。缺少专项工具时仍可完成规范初始化和基本维护；复杂冻结操作若没有可验证机制，报告缺口而不声称已完成。
+## 外部 Notes 依赖
 
-## 执行
+使用 [write-notes-like-deepseek](https://github.com/czm15053/write-notes-like-deepseek/tree/main/skills/write-notes-like-deepseek)。由本 Skill 负责探测依赖；已可用则复用，缺失则询问用户选择「项目安装」或「全局安装」，选择后自动通过 `npx skills add` 完成安装并确认可用，无需再询问是否执行同一次安装。用户也可以暂不安装；未回复不视为已选择安装范围。先读取实际可用版本的 `SKILL.md` 与相关参考；不在本 Skill 重建其格式、分类、生命周期、模板或校验器。
 
-1. 确认目标根目录、请求模式和授权范围。盘点入口、文档、代码归属、真实命令和既有决策格式。
-2. 按事实归属和目录契约确定必要文件、名称、层级、入口与资源位置。迁移前列出旧路径到新所有者的映射；保留已有 ADR 和稳定网站入口，明确适配。
-3. 对照内容契约写入或审查：明确条件、默认值、失败、所有权、生命周期、兼容性和限制中适用的内容。未知信息写入交付缺口，不留下假装完成的占位内容。
-4. 实施初始化/整理时，把长期文档维护规则、实际采用的命名/分组/导航/资源约定写入目标 `AGENTS.md` / `docs/AGENTS.md` 或其项目内所有者，使后续会话无需再次调用本 Skill 也能遵守。根 AGENTS 按开发/评审任务指向工程与领域规范；docs/AGENTS 负责文档编写，不将其子树约束自动扩张到源码。全仓根指令只保存常驻要求；领域细则放所属文档。
-5. 修复实际受影响的引用。决策移到 implemented 时改成当前决定；LESSONS 晋升后完整规则只保留在正式规范。
-6. 运行机械检查，再按源码和实际操作核对语义。未运行的命令、未检查的外链/锚点、无法确认的实现分别说明。
+在 Notes 职责范围内与本地旧定义冲突时采用外部 Skill，并清除本地竞争定义；用户直接要求和实际生效的项目指令仍按其优先级处理，冲突未解决时不能悄悄改写。具体接入、版本记录和缺失处理见 [Notes 规范](references/standards/notes.md)。不默认启用外部的看板或额外审批流程。
 
-## 验收与机械检查
+## 交付与采用状态
 
-运行 Skill 自带脚本，使用可用的 Python 3.10+ 启动器；`<skill-dir>` 是此 Skill 所在目录，`<project-root>` 是目标项目，不要写入产物中的本机路径。
+交付说明：所选场景、实际范围、三个职责域的变更及连接、迁移处置与例外、Notes 来源和可用性、核对依据、实际命令结果、未验证项与遗留工作。
+
+采用状态明确为未采用、部分采用或已采用；存在未处置旧材料、未接通的重要阅读路径、未落实的预算与检查入口或必要 Notes 操作无法完成时，**不标记全量采用完成**。基线记录在项目内，用于后续核对差异，不代替验收。
+
+**检查能力交付到目标仓库，优先复用已有等效工具。** 使用本 Skill 脚本时，接入后从项目根运行：
 
 ```text
-python <skill-dir>/scripts/check_docs.py <project-root>
-python <skill-dir>/scripts/check_docs.py <project-root> --config docs/doc-rules.json --json
+python3 scripts/check-docs.py . --config docs/doc-rules.json --json
 ```
 
-配置与覆盖范围见 [检查器说明](references/checker.md)。脚本只读，不联网、不执行文档命令；通过只表示被覆盖的机械规则合格。检查前声明排除范围，不能通过排除出错文档隐藏问题。
-
-交付说明：变更文件及归属、保留的项目约定、事实核对依据、执行的命令和结果、未验证项及下一步。审查给出具体文件位置；发现无源码可核对时明确标为缺口。再次执行应复用已有所有者，不反复生成相同文档。
-
-## 常见误用
-
-- 只生成目录和标题：按内容契约检查读者能否做出所需决定。
-- 把所有规范和教训堆进根 AGENTS：领域规则放所属规范，只留下必读导航。
-- 将已实施记录当作未完成计划：更新路径、状态和正文，保留真实取舍。
-- 为满足模板编造内容：删掉不适用项，报告未知事实。
-- 把脚本通过说成文档与代码一致：单独提供源码核对和执行证据。
+项目使用实际接入路径；脚本、配置与入口纳入版本管理，临时检查可直接用 Skill 自带脚本。配置、接入和升级见 [文档检查器](references/tools/check-docs.md)，内容核对见 [文档总则](references/standards/docs/README.md#同步与核对)。Notes 专用检查由外部工具执行。**机械通过不代表语义、运行或整个体系已经验证。**

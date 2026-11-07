@@ -1,5 +1,10 @@
 {
-  "required_files": ["SKILL.md", "references/scope.md", "references/reporting.md"],
-  "exclude": ["assets/templates/**"],
-  "note_roots": []
+  "required_files": [
+    "SKILL.md",
+    "references/scope.md",
+    "references/reporting.md"
+  ],
+  "exclude": [
+    "assets/templates/**"
+  ]
 }

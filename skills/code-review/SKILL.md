@@ -39,7 +39,7 @@ description: Use when reviewing uncommitted code changes, a commit or branch ran
 
 ## 协作与知识
 
-code-simplification可用于专门评估净维护成本，decision-records可治理重要决定，project-docs可指导所属文档；均非前置安装。评审中可以指出过度设计或记录失实，但不能把简化偏好、不同设计意见或缺少另一个Skill当成缺陷。活动决定解释意图，不是不可讨论的否决权；当前实现和义务仍须核对。
+code-simplification 可用于专门评估净维护成本，project-docs 可指导所属文档；项目采用 write-notes-like-deepseek 时由其治理决定，均非本评审的前置安装。评审中可以指出过度设计或记录失实，但不能把简化偏好、不同设计意见或缺少另一个Skill当成缺陷。活动决定解释意图，不是不可讨论的否决权；当前实现和义务仍须核对。
 
 默认在当前对话交付，不写设计记录、TODO或远端评论。需要长期记录或外部反馈时遵守实际授权和项目格式，不发起全库治理。
 

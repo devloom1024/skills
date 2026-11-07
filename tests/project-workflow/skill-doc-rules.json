@@ -1,4 +1,7 @@
 {
-  "required_files": ["SKILL.md", "references/workflow-format.md", "references/execution.md"],
-  "note_roots": []
+  "required_files": [
+    "SKILL.md",
+    "references/workflow-format.md",
+    "references/execution.md"
+  ]
 }
